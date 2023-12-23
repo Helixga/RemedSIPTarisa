@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css"><link rel="stylesheet" href="css/L.Control.Locate.min.css">
+        <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/leaflet-measure.css">
+        <style>
+        #map {
+            width: 1257px;
+            height: 838px;
+        }
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script><script src="js/L.Control.Locate.min.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet-measure.js"></script>
+        <script src="data/Morfologi_1.js"></script>
+        <script src="data/PembuanganLimbah_2.js"></script>
+        <script src="data/AKL_3.js"></script>
+        <script src="data/Drainase_4.js"></script>
+        <script src="data/KestabilanLereng_5.js"></script>
+        <script src="data/KetersediaanAir_6.js"></script>
+        <script>
+        var highlightLayer;
+        function highlightFeature(e) {
+            highlightLayer = e.target;
+
+            if (e.target.feature.geometry.type === 'LineString') {
+              highlightLayer.setStyle({
+                color: '#ffff00',
+              });
+            } else {
+              highlightLayer.setStyle({
+                fillColor: '#ffff00',
+                fillOpacity: 1
+              });
+            }
+        }
+        var map = L.map('map', {
+            zoomControl:true, maxZoom:28, minZoom:1
+        })
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        L.control.locate({locateOptions: {maxZoom: 19}}).addTo(map);
+        var measureControl = new L.Control.Measure({
+            position: 'topleft',
+            primaryLengthUnit: 'meters',
+            secondaryLengthUnit: 'kilometers',
+            primaryAreaUnit: 'sqmeters',
+            secondaryAreaUnit: 'hectares'
+        });
+        measureControl.addTo(map);
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0]
+        .innerHTML = '';
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0]
+        .className += ' fas fa-ruler';
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+            if (bounds_group.getLayers().length) {
+                map.fitBounds(bounds_group.getBounds());
+            }
+        }
+        map.createPane('pane_OSMStandard_0');
+        map.getPane('pane_OSMStandard_0').style.zIndex = 400;
+        var layer_OSMStandard_0 = L.tileLayer('http://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            pane: 'pane_OSMStandard_0',
+            opacity: 1.0,
+            attribution: '<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors, CC-BY-SA</a>',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 19
+        });
+        layer_OSMStandard_0;
+        map.addLayer(layer_OSMStandard_0);
+        function pop_Morfologi_1(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">fid</th>\
+                        <td>' + (feature.properties['fid'] !== null ? autolinker.link(feature.properties['fid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">DN</th>\
+                        <td>' + (feature.properties['DN'] !== null ? autolinker.link(feature.properties['DN'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>SKL Morfologi</strong><br />' + (feature.properties['SKL Morfologi'] !== null ? autolinker.link(feature.properties['SKL Morfologi'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_Morfologi_1_0(feature) {
+            switch(String(feature.properties['SKL Morfologi'])) {
+                case 'Kemampuan lahan dari morfologi cukup':
+                    return {
+                pane: 'pane_Morfologi_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(215,25,28,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Kemampuan lahan dari morfologi kurang':
+                    return {
+                pane: 'pane_Morfologi_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(254,201,128,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Kemampuan lahan dari morfologi sedang':
+                    return {
+                pane: 'pane_Morfologi_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(199,232,173,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Kemampuan lahan dari morfologi tinggi':
+                    return {
+                pane: 'pane_Morfologi_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(43,131,186,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_Morfologi_1');
+        map.getPane('pane_Morfologi_1').style.zIndex = 401;
+        map.getPane('pane_Morfologi_1').style['mix-blend-mode'] = 'normal';
+        var layer_Morfologi_1 = new L.geoJson(json_Morfologi_1, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Morfologi_1',
+            layerName: 'layer_Morfologi_1',
+            pane: 'pane_Morfologi_1',
+            onEachFeature: pop_Morfologi_1,
+            style: style_Morfologi_1_0,
+        });
+        bounds_group.addLayer(layer_Morfologi_1);
+        map.addLayer(layer_Morfologi_1);
+        function pop_PembuanganLimbah_2(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">fid</th>\
+                        <td>' + (feature.properties['fid'] !== null ? autolinker.link(feature.properties['fid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">DN</th>\
+                        <td>' + (feature.properties['DN'] !== null ? autolinker.link(feature.properties['DN'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>SKL Pembuangan Limbah</strong><br />' + (feature.properties['SKL Pembuangan Limbah'] !== null ? autolinker.link(feature.properties['SKL Pembuangan Limbah'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_PembuanganLimbah_2_0(feature) {
+            switch(String(feature.properties['SKL Pembuangan Limbah'])) {
+                case 'Kemampuan Pembuangan Limbah Cukup':
+                    return {
+                pane: 'pane_PembuanganLimbah_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(246,224,30,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Kemampuan Pembuangan Limbah Sedang':
+                    return {
+                pane: 'pane_PembuanganLimbah_2',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(172,234,73,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_PembuanganLimbah_2');
+        map.getPane('pane_PembuanganLimbah_2').style.zIndex = 402;
+        map.getPane('pane_PembuanganLimbah_2').style['mix-blend-mode'] = 'normal';
+        var layer_PembuanganLimbah_2 = new L.geoJson(json_PembuanganLimbah_2, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_PembuanganLimbah_2',
+            layerName: 'layer_PembuanganLimbah_2',
+            pane: 'pane_PembuanganLimbah_2',
+            onEachFeature: pop_PembuanganLimbah_2,
+            style: style_PembuanganLimbah_2_0,
+        });
+        bounds_group.addLayer(layer_PembuanganLimbah_2);
+        map.addLayer(layer_PembuanganLimbah_2);
+        function pop_AKL_3(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">fid</th>\
+                        <td>' + (feature.properties['fid'] !== null ? autolinker.link(feature.properties['fid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">DN</th>\
+                        <td>' + (feature.properties['DN'] !== null ? autolinker.link(feature.properties['DN'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Kelas Pengembangan</strong><br />' + (feature.properties['Kelas Pengembangan'] !== null ? autolinker.link(feature.properties['Kelas Pengembangan'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_AKL_3_0(feature) {
+            switch(String(feature.properties['Kelas Pengembangan'])) {
+                case 'Pengembangan Lahan Agak Tinggi':
+                    return {
+                pane: 'pane_AKL_3',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(166,206,227,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Pengembangan Lahan Rendah':
+                    return {
+                pane: 'pane_AKL_3',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(24,219,60,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Pengembangan Lahan Sedang':
+                    return {
+                pane: 'pane_AKL_3',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(246,224,30,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_AKL_3');
+        map.getPane('pane_AKL_3').style.zIndex = 403;
+        map.getPane('pane_AKL_3').style['mix-blend-mode'] = 'normal';
+        var layer_AKL_3 = new L.geoJson(json_AKL_3, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_AKL_3',
+            layerName: 'layer_AKL_3',
+            pane: 'pane_AKL_3',
+            onEachFeature: pop_AKL_3,
+            style: style_AKL_3_0,
+        });
+        bounds_group.addLayer(layer_AKL_3);
+        map.addLayer(layer_AKL_3);
+        function pop_Drainase_4(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">fid</th>\
+                        <td>' + (feature.properties['fid'] !== null ? autolinker.link(feature.properties['fid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">DN</th>\
+                        <td>' + (feature.properties['DN'] !== null ? autolinker.link(feature.properties['DN'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>SKL Drainase</strong><br />' + (feature.properties['SKL Drainase'] !== null ? autolinker.link(feature.properties['SKL Drainase'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_Drainase_4_0(feature) {
+            switch(String(feature.properties['SKL Drainase'])) {
+                case 'Drainase Kurang':
+                    return {
+                pane: 'pane_Drainase_4',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(246,224,30,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_Drainase_4');
+        map.getPane('pane_Drainase_4').style.zIndex = 404;
+        map.getPane('pane_Drainase_4').style['mix-blend-mode'] = 'normal';
+        var layer_Drainase_4 = new L.geoJson(json_Drainase_4, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Drainase_4',
+            layerName: 'layer_Drainase_4',
+            pane: 'pane_Drainase_4',
+            onEachFeature: pop_Drainase_4,
+            style: style_Drainase_4_0,
+        });
+        bounds_group.addLayer(layer_Drainase_4);
+        map.addLayer(layer_Drainase_4);
+        function pop_KestabilanLereng_5(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">fid</th>\
+                        <td>' + (feature.properties['fid'] !== null ? autolinker.link(feature.properties['fid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">DN</th>\
+                        <td>' + (feature.properties['DN'] !== null ? autolinker.link(feature.properties['DN'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>SKL Kestabilan Lereng</strong><br />' + (feature.properties['SKL Kestabilan Lereng'] !== null ? autolinker.link(feature.properties['SKL Kestabilan Lereng'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_KestabilanLereng_5_0(feature) {
+            switch(String(feature.properties['SKL Kestabilan Lereng'])) {
+                case 'Kestabilan Lereng Sedang':
+                    return {
+                pane: 'pane_KestabilanLereng_5',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(246,224,30,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Kestabilan Lereng Tinggi':
+                    return {
+                pane: 'pane_KestabilanLereng_5',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(172,234,73,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_KestabilanLereng_5');
+        map.getPane('pane_KestabilanLereng_5').style.zIndex = 405;
+        map.getPane('pane_KestabilanLereng_5').style['mix-blend-mode'] = 'normal';
+        var layer_KestabilanLereng_5 = new L.geoJson(json_KestabilanLereng_5, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_KestabilanLereng_5',
+            layerName: 'layer_KestabilanLereng_5',
+            pane: 'pane_KestabilanLereng_5',
+            onEachFeature: pop_KestabilanLereng_5,
+            style: style_KestabilanLereng_5_0,
+        });
+        bounds_group.addLayer(layer_KestabilanLereng_5);
+        map.addLayer(layer_KestabilanLereng_5);
+        function pop_KetersediaanAir_6(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">fid</th>\
+                        <td>' + (feature.properties['fid'] !== null ? autolinker.link(feature.properties['fid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">DN</th>\
+                        <td>' + (feature.properties['DN'] !== null ? autolinker.link(feature.properties['DN'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>SKL Ketersediaan Air</strong><br />' + (feature.properties['SKL Ketersediaan Air'] !== null ? autolinker.link(feature.properties['SKL Ketersediaan Air'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_KetersediaanAir_6_0(feature) {
+            switch(String(feature.properties['SKL Ketersediaan Air'])) {
+                case 'Ketersediaan Air Sedang':
+                    return {
+                pane: 'pane_KetersediaanAir_6',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(246,224,30,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Ketersediaan Air Tinggi':
+                    return {
+                pane: 'pane_KetersediaanAir_6',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(124,225,129,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_KetersediaanAir_6');
+        map.getPane('pane_KetersediaanAir_6').style.zIndex = 406;
+        map.getPane('pane_KetersediaanAir_6').style['mix-blend-mode'] = 'normal';
+        var layer_KetersediaanAir_6 = new L.geoJson(json_KetersediaanAir_6, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_KetersediaanAir_6',
+            layerName: 'layer_KetersediaanAir_6',
+            pane: 'pane_KetersediaanAir_6',
+            onEachFeature: pop_KetersediaanAir_6,
+            style: style_KetersediaanAir_6_0,
+        });
+        bounds_group.addLayer(layer_KetersediaanAir_6);
+        map.addLayer(layer_KetersediaanAir_6);
+        var baseMaps = {};
+        L.control.layers(baseMaps,{'Ketersediaan Air<br /><table><tr><td style="text-align: center;"><img src="legend/KetersediaanAir_6_KetersediaanAirSedang0.png" /></td><td>Ketersediaan Air Sedang</td></tr><tr><td style="text-align: center;"><img src="legend/KetersediaanAir_6_KetersediaanAirTinggi1.png" /></td><td>Ketersediaan Air Tinggi</td></tr></table>': layer_KetersediaanAir_6,'Kestabilan Lereng<br /><table><tr><td style="text-align: center;"><img src="legend/KestabilanLereng_5_KestabilanLerengSedang0.png" /></td><td>Kestabilan Lereng Sedang</td></tr><tr><td style="text-align: center;"><img src="legend/KestabilanLereng_5_KestabilanLerengTinggi1.png" /></td><td>Kestabilan Lereng Tinggi</td></tr></table>': layer_KestabilanLereng_5,'Drainase<br /><table><tr><td style="text-align: center;"><img src="legend/Drainase_4_DrainaseKurang0.png" /></td><td>Drainase Kurang</td></tr></table>': layer_Drainase_4,'AKL<br /><table><tr><td style="text-align: center;"><img src="legend/AKL_3_PengembanganLahanAgakTinggi0.png" /></td><td>Pengembangan Lahan Agak Tinggi</td></tr><tr><td style="text-align: center;"><img src="legend/AKL_3_PengembanganLahanRendah1.png" /></td><td>Pengembangan Lahan Rendah</td></tr><tr><td style="text-align: center;"><img src="legend/AKL_3_PengembanganLahanSedang2.png" /></td><td>Pengembangan Lahan Sedang</td></tr></table>': layer_AKL_3,'Pembuangan Limbah<br /><table><tr><td style="text-align: center;"><img src="legend/PembuanganLimbah_2_KemampuanPembuanganLimbahCukup0.png" /></td><td>Kemampuan Pembuangan Limbah Cukup</td></tr><tr><td style="text-align: center;"><img src="legend/PembuanganLimbah_2_KemampuanPembuanganLimbahSedang1.png" /></td><td>Kemampuan Pembuangan Limbah Sedang</td></tr></table>': layer_PembuanganLimbah_2,'Morfologi<br /><table><tr><td style="text-align: center;"><img src="legend/Morfologi_1_Kemampuanlahandarimorfologicukup0.png" /></td><td>Kemampuan lahan dari morfologi cukup</td></tr><tr><td style="text-align: center;"><img src="legend/Morfologi_1_Kemampuanlahandarimorfologikurang1.png" /></td><td>Kemampuan lahan dari morfologi kurang</td></tr><tr><td style="text-align: center;"><img src="legend/Morfologi_1_Kemampuanlahandarimorfologisedang2.png" /></td><td>Kemampuan lahan dari morfologi sedang</td></tr><tr><td style="text-align: center;"><img src="legend/Morfologi_1_Kemampuanlahandarimorfologitinggi3.png" /></td><td>Kemampuan lahan dari morfologi tinggi</td></tr></table>': layer_Morfologi_1,"OSM Standard": layer_OSMStandard_0,},{collapsed:false}).addTo(map);
+        setBounds();
+        </script>
+    </body>
+</html>
